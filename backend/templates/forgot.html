@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<article style="max-width:520px; margin:2rem auto;">
+  <h2>Forgot password</h2>
+  <p>Enter your email address and we'll send you a link to reset your password.</p>
+  <form method="post" action="/auth/forgot" style="display:grid; gap:0.75rem;">
+    <label>Email
+      <input type="email" name="email" placeholder="email@example.com" required />
+    </label>
+    <button type="submit">Send reset link</button>
+  </form>
+</article>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block content %}
+<article>
+  {% if request.query_params.get('email') == 'sent' %}
+  <p style="color:#1b5e20; background:#e8f5e9; border:1px solid #c8e6c9; padding:0.5rem 0.75rem; border-radius:10px;">Email sent successfully with your report.</p>
+  {% endif %}
+  <h2>Dashboard{% if user and user.full_name %}, {{ user.full_name }}{% endif %}</h2>
+  {% if stats %}
+  <div class="grid">
+    <article>
+      <h3>Total Uploads</h3>
+      <p style="font-size:1.5rem">{{ stats.total }}</p>
+    </article>
+    <article>
+      <h3>Normal</h3>
+      <p style="font-size:1.5rem">{{ stats.normal }}</p>
+    </article>
+    <article>
+      <h3>Abnormal</h3>
+      <p style="font-size:1.5rem">{{ stats.abnormal }}</p>
+    </article>
+  </div>
+  {% endif %}
+
+  {% if submissions %}
+  <h3>Recent Uploads</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>File</th>
+        <th>Result</th>
+        <th>Score</th>
+        <th>Report</th>
+        <th>Email</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in submissions %}
+      <tr>
+        <td>{{ s.created_at }}</td>
+        <td>{{ s.file_name }}</td>
+        <td>{{ s.result }}</td>
+        <td>{{ s.predicted_score }}</td>
+        <td><a href="/ecg/report/{{ s.id }}" target="_blank">PDF</a></td>
+        <td><a href="/ecg/report/{{ s.id }}/email">Send</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+
+  {% if result %}
+  <h3>Latest Prediction</h3>
+  {% if result.binary %}
+    <p><strong>Result:</strong> {{ result.binary }}</p>
+  {% endif %}
+  {% if result.score is not none %}
+    <p><strong>Score:</strong> {{ result.score }}</p>
+  {% endif %}
+  {% if result.probs %}
+    <details>
+      <summary>Class probabilities</summary>
+      <ul>
+      {% for cls, p in result.probs.items() %}
+        <li>{{ cls }}: {{ p }}</li>
+      {% endfor %}
+      </ul>
+    </details>
+  {% endif %}
+  {% if advice %}
+    <p><strong>Advice:</strong> {{ advice }}</p>
+  {% endif %}
+  {% if submission %}
+    <p>
+      <a href="/ecg/report/{{ submission.id }}" target="_blank">Download PDF report</a>
+      &nbsp;|&nbsp;
+      <a href="/ecg/report/{{ submission.id }}/email">Email me this report</a>
+    </p>
+  {% endif %}
+  {% if result.warning %}
+  <p style="color:orange">{{ result.warning }}</p>
+  {% endif %}
+  {% endif %}
+
+  <a role="button" href="/ecg/upload">Upload ECG</a>
+</article>
+{% endblock %}

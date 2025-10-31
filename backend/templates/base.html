@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ECG Health Prediction</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+</head>
+<body>
+  <nav class="container-fluid">
+    <ul>
+      <li><a href="{% if user %}/home{% else %}/auth/login{% endif %}"><strong>ECG App</strong></a></li>
+    </ul>
+    <ul>
+      {% if user %}
+      <li><a href="/home">Home</a></li>
+      <li><a href="/dashboard">Dashboard</a></li>
+      <li><a href="/ecg/upload">Upload</a></li>
+      <li><a href="/auth/logout">Logout</a></li>
+      {% else %}
+      <li><a href="/auth/login">Login</a></li>
+      <li><a href="/auth/register">Register</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

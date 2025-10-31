@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+<section style="max-width:860px; margin:1rem auto;">
+  <div style="display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; margin-bottom:0.75rem;">
+    <div style="display:flex; align-items:center; gap:0.75rem;">
+      <div style="width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg,#e8fff4,#f2f8ff); display:flex; align-items:center; justify-content:center; font-weight:700; color:#2a6;">
+        {% if user and user.full_name %}{{ user.full_name[0]|upper }}{% else %}{{ (user.email[0] if user and user.email else 'U')|upper }}{% endif %}
+      </div>
+      <div>
+        <h2 style="margin:0;">Profile</h2>
+        <p style="margin:0; color:#667;">Keep your contact and guardian details up to date.</p>
+      </div>
+    </div>
+    <div>
+      {% set complete = profile and profile.phone and profile.guardian_name and profile.guardian_phone and profile.guardian_email %}
+      <span style="display:inline-block; padding:0.35rem 0.6rem; border-radius:999px; font-size:0.85rem; background:{% if complete %}#e8f5e9{% else %}#fff3cd{% endif %}; color:{% if complete %}#1b5e20{% else %}#856404{% endif %}; border:1px solid {% if complete %}#c8e6c9{% else %}#ffeeba{% endif %};">
+        {% if complete %}Complete{% else %}Incomplete{% endif %}
+      </span>
+    </div>
+  </div>
+
+  {% if request.query_params.get('saved') == '1' %}
+  <p style="color:#1b5e20; background:#e8f5e9; border:1px solid #c8e6c9; padding:0.5rem 0.75rem; border-radius:10px;">Profile saved successfully.</p>
+  {% endif %}
+
+  <article>
+    <form method="post" action="/profile" style="display:grid; gap:0.9rem;">
+      <div class="grid">
+        <label>Phone
+          <input type="tel" name="phone" value="{{ profile.phone if profile else '' }}" required />
+        </label>
+        <label>Guardian Name
+          <input type="text" name="guardian_name" value="{{ profile.guardian_name if profile else '' }}" required />
+        </label>
+      </div>
+      <div class="grid">
+        <label>Guardian Phone
+          <input type="tel" name="guardian_phone" value="{{ profile.guardian_phone if profile else '' }}" required />
+        </label>
+        <label>Guardian Email
+          <input type="email" name="guardian_email" value="{{ profile.guardian_email if profile else '' }}" required />
+        </label>
+      </div>
+      <div style="display:flex; gap:0.5rem;">
+        <button type="submit">Save</button>
+        <a role="button" class="secondary" href="/dashboard">Back to Dashboard</a>
+      </div>
+    </form>
+  </article>
+
+  <article style="margin-top:1rem; border:1px solid #f3d2d2;">
+    <h3>Delete account</h3>
+    <p style="color:#a33">This will permanently delete your account and all uploads. This action cannot be undone.</p>
+    <form method="post" action="/profile/delete" onsubmit="return confirm('Are you sure you want to permanently delete your account?');">
+      <button type="submit" class="contrast" style="background:#c62828; border-color:#c62828;">Delete my account</button>
+    </form>
+  </article>
+</section>
+{% endblock %}

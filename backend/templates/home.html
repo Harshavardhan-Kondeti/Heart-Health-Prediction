@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<section style="padding: 2.5rem 0;">
+  <div style="display:flex; align-items:center; justify-content:space-between; gap:2rem; flex-wrap:wrap;">
+    <div style="flex:1 1 420px;">
+      <h1 style="margin:0 0 0.5rem 0; font-size:2rem;">Hello{% if user and user.full_name %}, {{ user.full_name }}{% elif user %}, {{ user.email }}{% endif %} 👋</h1>
+      <p style="font-size:1.05rem; color:#555; margin:0 0 1rem 0;">
+        Welcome to your ECG Health Assistant. Upload your ECG image and receive a quick Normal/Abnormal assessment powered by our trained model.
+      </p>
+      <div id="quote" style="font-style:italic; color:#2a6; min-height:1.6rem; margin:0.25rem 0 1.25rem 0;"></div>
+      <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+        <a role="button" href="/ecg/upload">Upload ECG</a>
+        <a role="button" class="secondary" href="/dashboard">View Dashboard</a>
+        <a role="button" class="contrast" href="/profile">Complete Profile</a>
+      </div>
+    </div>
+    <div style="flex:1 1 340px; max-width:520px;">
+      <div style="background:linear-gradient(135deg,#e8fff4,#f2f8ff); border-radius:14px; padding:0.3rem; box-shadow:0 6px 24px rgba(0,0,0,0.08);">
+        <img src="https://image2url.com/images/1761853862055-f3fc582a-b65f-443e-8f68-eb39ce3091a4.jpg" alt="ECG waveform" style="width:100%; border-radius:10px; display:block;" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="margin-top:1rem;">
+  <div class="grid">
+    <article>
+      <h3>Fast Triage</h3>
+      <p>Get a quick Normal/Abnormal output to guide next steps. Not a diagnosis; consult a clinician for decisions.</p>
+    </article>
+    <article>
+      <h3>Your Records</h3>
+      <p>Every upload is saved to your dashboard with downloadable PDF reports for your medical records.</p>
+    </article>
+    <article>
+      <h3>Care Network</h3>
+      <p>Keep guardian contact details up-to-date so they’re reachable if a follow-up is needed.</p>
+    </article>
+  </div>
+</section>
+
+<script>
+(function(){
+  const quotes = [
+    "The best time to care for your heart is now.",
+    "Small steps today, stronger heart tomorrow.",
+    "Healthy habits are the strongest medicine.",
+    "Early detection saves lives — stay proactive.",
+    "Move more, stress less, sleep well — your heart will thank you.",
+  ];
+  let i = 0;
+  const el = document.getElementById('quote');
+  const show = () => { el.textContent = quotes[i % quotes.length]; i++; };
+  show();
+  setInterval(show, 4500);
+})();
+</script>
+{% endblock %}

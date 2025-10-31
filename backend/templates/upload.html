@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<article>
+  <h2>Upload ECG</h2>
+  <form method="post" action="/ecg/upload" enctype="multipart/form-data">
+    <div class="grid">
+      <label>Age
+        <input type="number" name="age" min="0" />
+      </label>
+      <label>Sex
+        <select name="sex">
+          <option value="">Select</option>
+          <option value="M">Male</option>
+          <option value="F">Female</option>
+          <option value="O">Other</option>
+        </select>
+      </label>
+    </div>
+    <label>Notes
+      <textarea name="notes" rows="3"></textarea>
+    </label>
+    <label>ECG File (.png, .jpg, .jpeg, .csv, .npy)
+      <input type="file" name="file" accept=".png,.jpg,.jpeg,.csv,.npy" required />
+    </label>
+    <button type="submit">Submit</button>
+  </form>
+</article>
+{% endblock %}
