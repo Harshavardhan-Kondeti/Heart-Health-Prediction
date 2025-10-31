@@ -10,6 +10,8 @@ services:
         fromDatabase: true
         name: heart-health-db
         property: connectionString
+      - key: DISABLE_EMAIL_VERIFICATION
+        value: true
     autoDeploy: true
     disks:
       - name: uploads
