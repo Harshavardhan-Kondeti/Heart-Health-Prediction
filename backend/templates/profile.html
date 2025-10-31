@@ -52,7 +52,13 @@
     <h3>Delete account</h3>
     <p style="color:#a33">This will permanently delete your account and all uploads. This action cannot be undone.</p>
     <form method="post" action="/profile/delete" onsubmit="return confirm('Are you sure you want to permanently delete your account?');">
-      <button type="submit" class="contrast" style="background:#c62828; border-color:#c62828;">Delete my account</button>
+      <button type="submit" class="contrast" style="background:#c62828; border-color:#c62828; display:inline-flex; align-items:center; gap:0.4rem; padding:0.35rem 0.6rem; font-size:0.9rem;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M9 3h6m-9 4h12m-1 0-.8 12.4a2 2 0 0 1-2 1.6H8.8a2 2 0 0 1-2-1.6L6 7" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M10 11v6M14 11v6" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        Delete my account
+      </button>
     </form>
   </article>
 </section>

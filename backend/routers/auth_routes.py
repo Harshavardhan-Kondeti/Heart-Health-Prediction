@@ -16,6 +16,7 @@ import csv
 import re
 import os
 import smtplib
+import random
 from email.message import EmailMessage
 from jose import jwt
 
@@ -142,32 +143,36 @@ async def register(
                 writer.writerow(["id", "email", "full_name", "created_at"])
             writer.writerow([user.id, user.email, user.full_name or "", user.created_at.isoformat()])
 
-        # Send greeting + verification email (best-effort)
+        # Generate 6-digit verification code and email it
         try:
-            verify_token = _make_token(user.email, purpose="verify", minutes=60*24)
-            base = str(request.base_url).rstrip('/')
-            link = f"{base}/auth/verify?token={verify_token}"
+            code = f"{random.randint(0, 999999):06d}"
+            user.verify_code = code
+            user.verify_expires = datetime.utcnow() + timedelta(minutes=30)
+            db.add(user)
+            db.commit()
+
             pname = user.full_name or user.email
             body = "\n".join([
                 f"Dear {pname},",
                 "",
-                "Welcome to the ECG Health Assistant! Your account has been created successfully.",
-                "To verify your email and secure your account, please click the link below:",
-                link,
+                "Welcome to Heart Health!",
+                "Your email verification code is:",
                 "",
-                "If you did not sign up, please ignore this email.",
+                f"    {code}",
+                "",
+                "This code will expire in 30 minutes. If you did not sign up, please ignore this email.",
                 "",
                 "Best regards,",
-                "ECG Health Assistant",
+                "Heart Health",
                 "",
                 "Note: This is an automated message. Please do not reply.",
             ])
-            _send_email(user.email, "Welcome to ECG Health Assistant – Verify your email", body)
+            _send_email(user.email, "Heart Health – Your verification code", body)
         except Exception:
             pass
 
-        # Prompt user to check email
-        return RedirectResponse(url="/auth/login?check_email=1", status_code=status.HTTP_302_FOUND)
+        # Redirect to code entry page
+        return RedirectResponse(url=f"/auth/verify-code?email={user.email}", status_code=status.HTTP_302_FOUND)
     except Exception as e:
         try:
             db.rollback()
@@ -176,19 +181,30 @@ async def register(
         return templates.TemplateResponse("register.html", {"request": request, "error": f"Registration failed: {str(e)}"})
 
 
-@router.get("/verify", response_class=HTMLResponse)
-async def verify_email(request: Request, token: str, db: Session = Depends(get_db)):
-    email = _verify_token(token, expected_purpose="verify")
-    if not email:
-        return templates.TemplateResponse("login.html", {"request": request, "error": "Invalid or expired verification link."})
+@router.get("/verify-code", response_class=HTMLResponse)
+async def verify_code_page(request: Request, email: str | None = None):
+    return templates.TemplateResponse("verify_code.html", {"request": request, "email": email})
+
+
+@router.post("/verify-code")
+async def verify_code_submit(request: Request, email: str = Form(...), code: str = Form(...), db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == email).first()
-    if user:
-        try:
-            user.is_verified = True
-            db.add(user)
-            db.commit()
-        except Exception:
-            db.rollback()
+    if not user:
+        return templates.TemplateResponse("verify_code.html", {"request": request, "email": email, "error": "User not found."})
+    now = datetime.utcnow()
+    if not user.verify_code or not user.verify_expires or user.verify_expires < now:
+        return templates.TemplateResponse("verify_code.html", {"request": request, "email": email, "error": "Code expired. Please register again or request a new code."})
+    if code.strip() != (user.verify_code or "").strip():
+        return templates.TemplateResponse("verify_code.html", {"request": request, "email": email, "error": "Invalid code."})
+    try:
+        user.is_verified = True
+        user.verify_code = None
+        user.verify_expires = None
+        db.add(user)
+        db.commit()
+    except Exception:
+        db.rollback()
+        return templates.TemplateResponse("verify_code.html", {"request": request, "email": email, "error": "Failed to verify. Try again."})
     return RedirectResponse(url="/auth/login?verified=1", status_code=303)
 
 

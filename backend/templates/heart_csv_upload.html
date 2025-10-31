@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+<article>
+  <h2>Upload CSV for Heart Disease Prediction</h2>
+  <p>Upload a tabular .csv file with the same schema used for training (categorical values allowed). The model and scaler will be applied, and a preview of predictions will be shown.</p>
+
+  {% if error %}
+    <article class="contrast" style="border-left: 4px solid #c00;">
+      <p><strong>Error:</strong> {{ error }}</p>
+    </article>
+  {% endif %}
+
+  {% if download_msg %}
+    <article class="contrast" style="border-left: 4px solid #0a0;">
+      <p>{{ download_msg }}</p>
+    </article>
+  {% endif %}
+
+  <form method="post" action="/heart/upload" enctype="multipart/form-data">
+    <label>CSV File
+      <input type="file" name="file" accept=".csv" required />
+    </label>
+    <button type="submit">Predict</button>
+  </form>
+
+  {% if table %}
+  <h3>Predictions Preview (first {{ table|length }} of {{ count }})</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Prediction</th>
+        <th>Probability</th>
+        <th>Precautions & Measures</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in table %}
+      <tr>
+        <td>{{ row.index }}</td>
+        <td>{{ row.prediction }}</td>
+        <td>{{ '%.3f' % row.prob }}</td>
+        <td>{{ row.advice }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+
+</article>
+{% endblock %}
+
+

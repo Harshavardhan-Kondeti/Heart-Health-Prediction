@@ -1,0 +1,50 @@
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+.pytest_cache/
+.mypy_cache/
+.coverage
+coverage.xml
+htmlcov/
+*.egg-info/
+build/
+dist/
+
+# Environments / config
+.env
+.env.*
+venv/
+.venv/
+env/
+
+# Node
+node_modules/
+
+# Data & artifacts
+uploads/
+reports/*.pdf
+*.db
+*.sqlite
+ecg_app.db
+
+# Large model artifacts (keep directory structure)
+models/**/*.pkl
+models/**/*.keras
+models/**/*.onnx
+models/**/*.h5
+models/**/*.pt
+models/**/*.pth
+models/**/heart_disease_predictions.csv
+
+# Cache & logs
+*.log
+logs/
+

@@ -186,3 +186,107 @@ class ModelService:
             "binary": "Normal",
             "warning": "Model file not found. Place ecg_cnn_effb0.keras in models/ or set MODEL_KERAS_PATH."
         }
+
+
+class PPGImageService:
+    def __init__(self):
+        # Fixed paths to match repository structure
+        self.model_path = os.getenv("PPG_MODEL_PATH", "models/PPG_Model/ppg_health_model.pkl")
+        self.pca_path = os.getenv("PPG_PCA_PATH", "models/PPG_Model/ppg_pca_transformer.pkl")
+        self._model = None
+        self._pca = None
+        self._load()
+
+    def _load(self) -> None:
+        try:
+            if os.path.exists(self.model_path):
+                self._model = joblib.load(self.model_path)
+        except Exception:
+            self._model = None
+        try:
+            if os.path.exists(self.pca_path):
+                self._pca = joblib.load(self.pca_path)
+        except Exception:
+            self._pca = None
+
+    def is_ready(self) -> bool:
+        return (self._model is not None) and (self._pca is not None)
+
+    def expected_num_features(self) -> Optional[int]:
+        try:
+            return int(getattr(self._pca, "n_features_in_", None)) if self._pca is not None else None
+        except Exception:
+            return None
+
+    def preprocess_image_array(self, image: np.ndarray) -> np.ndarray:
+        # Convert RGB to grayscale if needed
+        if image.ndim == 3 and image.shape[2] == 3:
+            # luminosity method
+            r = image[..., 0]
+            g = image[..., 1]
+            b = image[..., 2]
+            gray = 0.2989 * r + 0.5870 * g + 0.1140 * b
+        elif image.ndim == 2:
+            gray = image
+        else:
+            gray = image.squeeze()
+
+        gray = gray.astype(np.float32)
+        # Normalize to 0-1 if looks like 0-255
+        if gray.max() > 1.5:
+            gray = gray / 255.0
+
+        flat = gray.flatten()
+
+        # Pad/trim to PCA expected length
+        n_feat = self.expected_num_features()
+        if n_feat is not None:
+            if flat.size > n_feat:
+                flat = flat[:n_feat]
+            elif flat.size < n_feat:
+                flat = np.pad(flat, (0, n_feat - flat.size), mode="constant")
+        return flat.astype(np.float32)
+
+    def predict_from_image_array(self, image: np.ndarray) -> Dict[str, Any]:
+        if not self.is_ready():
+            return {
+                "label": None,
+                "score": None,
+                "binary": None,
+                "warning": "PPG model/PCA missing. Ensure files exist in models/PPG_Model/.",
+            }
+
+        x_vec = self.preprocess_image_array(image)
+        # Apply PCA
+        try:
+            x_pca = self._pca.transform(x_vec.reshape(1, -1))  # type: ignore[attr-defined]
+        except Exception:
+            return {
+                "label": None,
+                "score": None,
+                "binary": None,
+                "warning": "Failed to transform with PCA. Check PCA compatibility.",
+            }
+
+        # Predict probability of MI (class 1)
+        try:
+            if hasattr(self._model, "predict_proba"):
+                proba = self._model.predict_proba(x_pca)  # type: ignore[attr-defined]
+                score = float(proba[0, 1])
+            else:
+                pred = int(self._model.predict(x_pca)[0])  # type: ignore[attr-defined]
+                score = float(pred)
+        except Exception:
+            return {
+                "label": None,
+                "score": None,
+                "binary": None,
+                "warning": "Failed during PPG model prediction.",
+            }
+
+        label = "MI" if score >= 0.5 else "Normal"
+        return {
+            "label": label,
+            "score": score,
+            "binary": label,
+        }

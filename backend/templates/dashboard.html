@@ -4,31 +4,42 @@
   {% if request.query_params.get('email') == 'sent' %}
   <p style="color:#1b5e20; background:#e8f5e9; border:1px solid #c8e6c9; padding:0.5rem 0.75rem; border-radius:10px;">Email sent successfully with your report.</p>
   {% endif %}
-  <h2>Dashboard{% if user and user.full_name %}, {{ user.full_name }}{% endif %}</h2>
+  <div class="hero">
+    <h2 style="margin:0;">Dashboard{% if user and user.full_name %}, {{ user.full_name }}{% endif %}</h2>
+    <p style="margin:.3rem 0 0 0; color:#555;">Overview of your uploads and health summaries.</p>
+  </div>
   {% if stats %}
-  <div class="grid">
-    <article>
+  <div class="cards">
+    <div class="card">
       <h3>Total Uploads</h3>
-      <p style="font-size:1.5rem">{{ stats.total }}</p>
-    </article>
-    <article>
+      <div class="value">{{ stats.total }}</div>
+    </div>
+    <div class="card ok">
       <h3>Normal</h3>
-      <p style="font-size:1.5rem">{{ stats.normal }}</p>
-    </article>
-    <article>
+      <div class="value">{{ stats.normal }}</div>
+    </div>
+    <div class="card bad">
       <h3>Abnormal</h3>
-      <p style="font-size:1.5rem">{{ stats.abnormal }}</p>
-    </article>
+      <div class="value">{{ stats.abnormal }}</div>
+    </div>
+    <div class="card small">
+      <h3>Overall Report</h3>
+      <div class="toolbar">
+        <a role="button" class="contrast btn-sm" href="/fusion/report">Generate Overall Heart Report</a>
+      </div>
+    </div>
   </div>
   {% endif %}
 
   {% if submissions %}
-  <h3>Recent Uploads</h3>
+  <h3 style="margin-top:1.5rem">Recent Uploads</h3>
+  <div class="centered"><div class="panel">
   <table>
     <thead>
       <tr>
-        <th>Date</th>
+        <th>Date/Time</th>
         <th>File</th>
+        <th>Test</th>
         <th>Result</th>
         <th>Score</th>
         <th>Report</th>
@@ -38,8 +49,9 @@
     <tbody>
       {% for s in submissions %}
       <tr>
-        <td>{{ s.created_at }}</td>
+        <td>{{ s.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
         <td>{{ s.file_name }}</td>
+        <td>{{ s.test_type }}</td>
         <td>{{ s.result }}</td>
         <td>{{ s.predicted_score }}</td>
         <td><a href="/ecg/report/{{ s.id }}" target="_blank">PDF</a></td>
@@ -48,6 +60,7 @@
       {% endfor %}
     </tbody>
   </table>
+  </div></div>
   {% endif %}
 
   {% if result %}
@@ -83,6 +96,10 @@
   {% endif %}
   {% endif %}
 
-  <a role="button" href="/ecg/upload">Upload ECG</a>
+  <div class="toolbar" style="margin-top:1rem; justify-content:center;">
+    <a role="button" href="/ecg/upload">Upload ECG</a>
+    <a role="button" href="/ppg/upload">Upload PPG Image</a>
+    <a role="button" href="/heart/upload">Upload Heart CSV</a>
+  </div>
 </article>
 {% endblock %}

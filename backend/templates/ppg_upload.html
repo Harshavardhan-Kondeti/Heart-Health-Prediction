@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<article>
+  <h2>Upload PPG Signal Image</h2>
+  <form method="post" action="/ppg/upload" enctype="multipart/form-data">
+    <div class="grid">
+      <label>Age
+        <input type="number" name="age" min="0" />
+      </label>
+      <label>Sex
+        <select name="sex">
+          <option value="">Select</option>
+          <option value="M">Male</option>
+          <option value="F">Female</option>
+          <option value="O">Other</option>
+        </select>
+      </label>
+    </div>
+    <label>Notes
+      <textarea name="notes" rows="3"></textarea>
+    </label>
+    <label>PPG Image (.png, .jpg, .jpeg)
+      <input type="file" name="file" accept=".png,.jpg,.jpeg" required />
+    </label>
+    <button type="submit">Submit</button>
+  </form>
+
+  <p style="margin-top:1rem">
+    <a role="button" href="/ecg/upload">Go to ECG Upload</a>
+  </p>
+</article>
+{% endblock %}
+
+

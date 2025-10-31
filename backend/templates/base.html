@@ -1,21 +1,58 @@
 <!DOCTYPE html>
-<html>
+<html data-theme="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ECG Health Prediction</title>
+  <title>Heart Health</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <style>
+    :root {
+      --card-radius: 14px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.25), 0 1px 3px rgba(0,0,0,0.2);
+      --shadow-md: 0 8px 24px rgba(0,0,0,0.28);
+      --brand: #4d9eff;
+      --ok: #33b679;
+      --warn: #f6ad55;
+      --bad: #ef5350;
+      --surface: #121418;
+      --surface-2: #171a1f;
+      --surface-3: #1e222a;
+      --text: #e6e8ee;
+    }
+    body { background: var(--surface); color: var(--text); }
+    main.container { padding-bottom: 2rem; width: min(1100px, 92vw); margin: 0 auto; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+    .card { border-radius: var(--card-radius); padding: 1rem 1.1rem; box-shadow: var(--shadow-sm); background: var(--surface-2); border: 1px solid #232833; }
+    .card h3 { margin-bottom: .25rem; color: var(--text); }
+    .card .value { font-size: 1.6rem; font-weight: 700; }
+    .card.ok { border-left: 4px solid var(--ok); }
+    .card.warn { border-left: 4px solid var(--warn); }
+    .card.bad { border-left: 4px solid var(--bad); }
+    .card.small { padding: .75rem .85rem; max-width: 260px; }
+    .card.small h3 { font-size: 1rem; margin-bottom: .5rem; }
+    .btn-sm { font-size: .9rem !important; padding: .4rem .6rem !important; line-height: 1.1 !important; }
+    .panel { background: var(--surface-2); border: 1px solid #232833; border-radius: var(--card-radius); padding: 1rem 1.1rem; box-shadow: var(--shadow-sm); width: min(100%, 1000px); margin: 0 auto; }
+    .centered { width: 100%; display: flex; justify-content: center; }
+    table { border-collapse: collapse; width: 100%; overflow: hidden; border-radius: 10px; box-shadow: var(--shadow-sm); }
+    table thead tr { background: var(--surface-3); }
+    table th, table td { padding: .7rem .8rem; vertical-align: top; }
+    table td { word-break: break-word; }
+    table tbody tr:not(:last-child) { border-bottom: 1px solid #2a2f3a; }
+    .toolbar { display: flex; gap: .6rem; flex-wrap: wrap; align-items: center; }
+    .toolbar a[role="button"], .toolbar button { box-shadow: var(--shadow-sm); }
+    .hero { padding: 1rem 1.2rem; border-radius: var(--card-radius); background: linear-gradient(135deg, #0f1320, #161a22); box-shadow: var(--shadow-md); margin-bottom: 1rem; border: 1px solid #232833; }
+  </style>
 </head>
 <body>
   <nav class="container-fluid">
     <ul>
-      <li><a href="{% if user %}/home{% else %}/auth/login{% endif %}"><strong>ECG App</strong></a></li>
+      <li><a href="{% if user %}/home{% else %}/auth/login{% endif %}"><strong>Heart Health</strong></a></li>
     </ul>
     <ul>
       {% if user %}
       <li><a href="/home">Home</a></li>
       <li><a href="/dashboard">Dashboard</a></li>
-      <li><a href="/ecg/upload">Upload</a></li>
+      <li><a href="/upload">Upload</a></li>
       <li><a href="/auth/logout">Logout</a></li>
       {% else %}
       <li><a href="/auth/login">Login</a></li>

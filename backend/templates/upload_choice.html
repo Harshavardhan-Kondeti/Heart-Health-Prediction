@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<article>
+  <h2>Select Upload Type</h2>
+  <div class="grid" style="align-items:stretch;">
+    <article>
+      <h3>ECG</h3>
+      <p>Upload an ECG signal (image or file) for Normal/Abnormal assessment.</p>
+      <a role="button" href="/ecg/upload">Go to ECG Upload</a>
+    </article>
+    <article>
+      <h3>PPG</h3>
+      <p>Upload a PPG waveform image to screen for Normal vs MI indication.</p>
+      <a role="button" class="secondary" href="/ppg/upload">Go to PPG Upload</a>
+    </article>
+    <article>
+      <h3>Heart CSV</h3>
+      <p>Upload a tabular .csv to predict heart disease risk with precautions.</p>
+      <a role="button" class="contrast" href="/heart/upload">Go to Heart CSV Upload</a>
+    </article>
+  </div>
+</article>
+{% endblock %}
+
+

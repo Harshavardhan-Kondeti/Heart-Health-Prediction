@@ -5,11 +5,13 @@
     <div style="flex:1 1 420px;">
       <h1 style="margin:0 0 0.5rem 0; font-size:2rem;">Hello{% if user and user.full_name %}, {{ user.full_name }}{% elif user %}, {{ user.email }}{% endif %} 👋</h1>
       <p style="font-size:1.05rem; color:#555; margin:0 0 1rem 0;">
-        Welcome to your ECG Health Assistant. Upload your ECG image and receive a quick Normal/Abnormal assessment powered by our trained model.
+        Welcome to Heart Health — a unified assistant for ECG, PPG, and health records.
+        Upload your signals or CSV data to get a quick risk triage, personalized guidance,
+        and a consolidated report. This is informational support, not a medical diagnosis.
       </p>
       <div id="quote" style="font-style:italic; color:#2a6; min-height:1.6rem; margin:0.25rem 0 1.25rem 0;"></div>
       <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
-        <a role="button" href="/ecg/upload">Upload ECG</a>
+        <a role="button" href="/upload">Upload</a>
         <a role="button" class="secondary" href="/dashboard">View Dashboard</a>
         <a role="button" class="contrast" href="/profile">Complete Profile</a>
       </div>

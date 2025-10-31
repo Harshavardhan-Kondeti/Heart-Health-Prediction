@@ -29,3 +29,21 @@ def init_db():
     except Exception:
         # Column likely exists; ignore
         pass
+    # Add users.verify_code if missing
+    try:
+        with engine.connect() as conn:
+            conn.execute(text("ALTER TABLE users ADD COLUMN verify_code VARCHAR"))
+    except Exception:
+        pass
+    # Add users.verify_expires if missing
+    try:
+        with engine.connect() as conn:
+            conn.execute(text("ALTER TABLE users ADD COLUMN verify_expires DATETIME"))
+    except Exception:
+        pass
+    # Add submissions.test_type if missing
+    try:
+        with engine.connect() as conn:
+            conn.execute(text("ALTER TABLE submissions ADD COLUMN test_type VARCHAR"))
+    except Exception:
+        pass

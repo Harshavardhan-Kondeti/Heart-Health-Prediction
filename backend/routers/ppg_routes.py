@@ -1,45 +1,45 @@
 import os
-from typing import Optional
 from datetime import datetime
+from pathlib import Path
+from typing import Optional
+
 from fastapi import APIRouter, Depends, File, Form, UploadFile, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
-from pathlib import Path
+import numpy as np
 
 from ..auth import get_current_user
 from ..database import get_db
 from ..models import Submission
-from ..ml.inference import ModelService
-from ..ml.preprocess import load_input_from_bytes
+from ..ml.inference import PPGImageService
+from ..ml.preprocess import load_image_from_bytes
+
 
 router = APIRouter()
 templates = Jinja2Templates(directory="backend/templates")
-model_service = ModelService()
+ppg_service = PPGImageService()
 UPLOAD_DIR = Path("uploads")
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
 
-def _advice_text(binary: Optional[str]) -> str:
+def _ppg_advice_text(binary: Optional[str]) -> str:
     if binary == "Normal":
         return (
-            "Prediction suggests a normal ECG. If you have symptoms, consider a routine check-up. "
-            "General advice: maintain healthy lifestyle, periodic 12‑lead ECG if clinically indicated."
+            "Prediction suggests a normal PPG. Maintain healthy lifestyle; monitor if symptoms occur."
         )
     return (
-        "Prediction suggests possible abnormality. Please consult a cardiologist. Suggested tests: "
-        "12‑lead ECG, cardiac troponin (if acute symptoms), echocardiogram, Holter monitoring, "
-        "and/or exercise stress test as per clinical judgment. If chest pain or severe symptoms, seek urgent care."
+        "Prediction suggests possible abnormality (MI risk). Please consult a cardiologist promptly."
     )
 
 
 @router.get("/upload", response_class=HTMLResponse)
-async def upload_page(request: Request, user=Depends(get_current_user)):
-    return templates.TemplateResponse("upload.html", {"request": request, "user": user})
+async def ppg_upload_page(request: Request, user=Depends(get_current_user)):
+    return templates.TemplateResponse("ppg_upload.html", {"request": request, "user": user})
 
 
 @router.post("/upload")
-async def upload(
+async def ppg_upload(
     request: Request,
     age: Optional[int] = Form(None),
     sex: Optional[str] = Form(None),
@@ -48,9 +48,7 @@ async def upload(
     user=Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    img_size = model_service.get_expected_image_size()
-
-    # Read bytes (so we can both parse and save)
+    # Read bytes for both saving and processing
     data = await file.read()
 
     # Save to disk with timestamp prefix
@@ -60,16 +58,17 @@ async def upload(
     with out_path.open("wb") as f:
         f.write(data)
 
-    # Load input array
-    arr = await load_input_from_bytes(data, file.filename or "", image_size=img_size)
-
-    # Predict
-    result = model_service.predict(arr)
+    # Load image array (RGB) then predict via PPG service
+    img_arr = await load_image_from_bytes(data, file.filename or "")
+    if img_arr.size == 0:
+        result = {"warning": "Unsupported file type. Please upload a PNG/JPG image of the PPG signal."}
+    else:
+        result = ppg_service.predict_from_image_array(img_arr)
 
     # Save record
     submission = Submission(
         user_id=user.id,
-        test_type="ECG",
+        test_type="PPG",
         age=age,
         sex=sex,
         notes=notes,
@@ -81,7 +80,7 @@ async def upload(
     db.commit()
     db.refresh(submission)
 
-    advice = _advice_text(result.get("binary"))
+    advice = _ppg_advice_text(result.get("binary"))
 
     return templates.TemplateResponse(
         "dashboard.html",
@@ -93,3 +92,5 @@ async def upload(
             "advice": advice,
         },
     )
+
+

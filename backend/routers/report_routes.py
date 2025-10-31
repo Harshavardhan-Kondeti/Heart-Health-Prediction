@@ -27,7 +27,7 @@ def _generate_pdf(path: Path, user: User, sub: Submission, result: dict, advice:
     y = height - 50
 
     c.setFont("Helvetica-Bold", 16)
-    c.drawString(50, y, "ECG Prediction Report")
+    c.drawString(50, y, "Heart Health Report")
     y -= 25
 
     c.setFont("Helvetica", 10)
@@ -191,7 +191,7 @@ async def email_report(submission_id: int, user=Depends(get_current_user), db: S
     lines = [
         f"Dear {patient_name},",
         "",
-        "Thank you for using the ECG Health Assistant. Please find attached your ECG prediction report.",
+        "Thank you for using the Heart Health Assistant. Please find attached your ECG prediction report.",
         "",
         f"Summary:",
         f"  - Result: {result.get('binary','N/A')}",
@@ -205,7 +205,7 @@ async def email_report(submission_id: int, user=Depends(get_current_user), db: S
         "Please consult a qualified clinician for medical advice.",
         "",
         "Best regards,",
-        "ECG Health Assistant",
+        "Heart Health Assistant",
         "",
         "Note: This is an automated message. Please do not reply to this email.",
     ]

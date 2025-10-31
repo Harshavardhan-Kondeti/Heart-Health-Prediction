@@ -12,6 +12,8 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
     full_name = Column(String, nullable=True)
     is_verified = Column(Boolean, default=False, nullable=False)
+    verify_code = Column(String, nullable=True)
+    verify_expires = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     submissions = relationship("Submission", back_populates="user")
@@ -36,6 +38,7 @@ class Submission(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    test_type = Column(String, nullable=True)  # "ECG" or "PPG"
     age = Column(Integer, nullable=True)
     sex = Column(String, nullable=True)
     notes = Column(Text, nullable=True)
