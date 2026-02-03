@@ -29,6 +29,7 @@ env/
 node_modules/
 
 # Data & artifacts
+data/
 uploads/
 reports/*.pdf
 *.db
