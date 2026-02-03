@@ -1,0 +1,6 @@
+State,Sex,GeneralHealth,PhysicalHealthDays,MentalHealthDays,LastCheckupTime,PhysicalActivities,SleepHours,RemovedTeeth,HadAngina,HadStroke,HadAsthma,HadSkinCancer,HadCOPD,HadDepressiveDisorder,HadKidneyDisease,HadArthritis,HadDiabetes,DeafOrHardOfHearing,BlindOrVisionDifficulty,DifficultyConcentrating,DifficultyWalking,DifficultyDressingBathing,DifficultyErrands,SmokerStatus,ECigaretteUsage,ChestScan,RaceEthnicityCategory,AgeCategory,HeightInMeters,WeightInKilograms,BMI,AlcoholDrinkers,HIVTesting,FluVaxLast12,PneumoVaxEver,TetanusLast10Tdap,HighRiskLastYear,CovidPos,Prediction
+0,0,4,4,0,3,1,9,2,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,2,0,1,2,1.6,71.67,27.99,0,0,1,1,2,0,0,Normal
+0,1,2,0,3,1,1,7,0,0,0,1,0,0,1,0,0,1,0,0,1,0,0,0,0,1,0,0,1,1.78,95.25,30.13,1,1,0,0,0,0,0,Normal
+1,0,0,0,0,3,1,8,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,0,1,0,1.65,60.0,22.04,1,1,1,0,1,0,1,Normal
+3,1,1,15,10,2,0,5,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,3,1.75,100.0,32.65,0,0,0,1,0,1,0,Abnormal (Heart Disease)
+2,0,3,30,25,0,0,4,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,0,4,1.58,80.0,32.06,0,0,0,0,0,1,1,Abnormal (Heart Disease)

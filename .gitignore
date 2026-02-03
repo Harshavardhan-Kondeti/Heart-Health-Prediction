@@ -36,14 +36,9 @@ reports/*.pdf
 *.sqlite
 ecg_app.db
 
-# Large model artifacts (keep directory structure)
-models/**/*.pkl
-models/**/*.keras
-models/**/*.onnx
-models/**/*.h5
-models/**/*.pt
-models/**/*.pth
-models/**/heart_disease_predictions.csv
+# Models are now allowed for simpler deployment (Total ~50MB)
+!models/**/*.pkl
+!models/**/*.keras
 
 # Cache & logs
 *.log
