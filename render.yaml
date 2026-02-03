@@ -4,22 +4,19 @@ services:
     env: python
     plan: starter
     buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    startCommand: mkdir -p persistence/uploads persistence/reports && ln -sfn persistence/uploads uploads && ln -sfn persistence/reports reports && uvicorn backend.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: DATABASE_URL
-        fromDatabase: true
-        name: heart-health-db
-        property: connectionString
+        fromDatabase:
+          name: heart-health-db
+          property: connectionString
       - key: DISABLE_EMAIL_VERIFICATION
         value: true
     autoDeploy: true
-    disks:
-      - name: uploads
-        mountPath: /opt/render/project/src/uploads
-        sizeGB: 2
-      - name: reports
-        mountPath: /opt/render/project/src/reports
-        sizeGB: 2
+    disk:
+      name: heart-health-storage
+      mountPath: /opt/render/project/src/persistence
+      sizeGB: 5
 
 databases:
   - name: heart-health-db
