@@ -79,18 +79,18 @@ Set `MODEL_DIR` to point to where these artifacts live. In production on Render,
 - Heart: `heart_disease_model_LGBM_2022.pkl`, `heart_disease_scaler_LGBM_2022.pkl`
 - PPG: `ppg_health_model.pkl`, `ppg_pca_transformer.pkl`
 
-## Deploy to Railway.app
+## Deployment
 
-Railway is recommended for this project.
+For a detailed walkthrough, see the [deployment_guide.md](file:///C:/Users/91900/.gemini/antigravity/brain/626c8481-524f-4d7a-a7b4-6cb491ef8f45/deployment_guide.md).
 
-### Steps:
-1.  **Sign up** at [railway.app](https://railway.app).
-2.  **New Project** → **Deploy from GitHub repo**.
-3.  **Add Database**: Add a PostgreSQL service.
-4.  **Configure Variables**:
-    *   Set `DATABASE_URL` by referencing the PostgreSQL service variable.
-    *   Set `MODEL_DIR=models`.
-5.  **Models**: Ensure your ML models are available (either in git or downloaded via a script).
+### 🤗 Hugging Face Spaces (Recommended)
+This project is configured for Hugging Face Spaces using the included `Dockerfile`. 
+- **Type**: Docker
+- **Port**: 7860
+
+### 🆓 Other Free Options
+- **Koyeb**: Offers a free "Nano" tier.
+- **Render**: Has a free tier for web services.
 
 ### Notes for production
 - Use PostgreSQL (required for persistence across restarts).
